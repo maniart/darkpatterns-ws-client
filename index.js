@@ -1,7 +1,15 @@
 // Connect to server
+var WS_SERVER_ADDRESS;
+
+if(process.env.WS_SERVER_LOCATION === 'local') {
+  WS_SERVER_LOCATION = 'http://localhost:2323';
+} else {
+  WS_SERVER_LOCATION = 'http://darkpatterns.io:2323';
+}
+
 var io = require('socket.io-client');
 var gamepad = require('gamepad');
-var socket = io.connect('http://localhost:2323', {reconnect: true});
+var socket = io.connect(WS_SERVER_LOCATION, {reconnect: true});
 
 // Initialize `gamepad` library
 gamepad.init();
@@ -12,10 +20,12 @@ setInterval(gamepad.processEvents, 16);
 // Scan for new gamepads as a slower rate
 setInterval(gamepad.detectDevices, 500);
 
+console.log('\n WS SERVER LOCATION IS:', WS_SERVER_LOCATION ,'\n');
 
 // Add a connect listener
 socket.on('connect', function() {
-  console.log('WS CLIENT: Connected!');
+
+  console.log('\n WS CLIENT: Connected! \n');
 
   // Listen for move events on all gamepads
   gamepad.on('move', function(id, axis, value) {
